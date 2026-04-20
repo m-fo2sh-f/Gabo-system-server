@@ -6,36 +6,41 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Employee;
 use App\Http\Resources\EmployeeResource;
-
+use App\Http\Requests\Api\Employee\StoreEmployeeRequest;
+use App\Http\Requests\Api\Employee\UpdateEmployeeRequest;
+use App\Traits\ApiResponseTrait;
+use App\Services\EmployeeService;
+use Illuminate\Http\JsonResponse;
 class EmployeeController extends Controller
 {
-    public function index(Request $request)
-{
-    $query = Employee::query();
-    $query->when($request->filled('search'), function($q) use ($request) {
-        $q->where('name', 'like', '%' . $request->search . '%');
-    });
-    $query->when($request->filled('type'), function($q) use ($request) {
-        $type = $request->type;
-        $mainTypes = ['full_time', 'part_time', 'internship'];
-        if (in_array($type, $mainTypes)) {
-            $q->where('employment_type', $type);
-        } 
-        elseif ($type === 'freelance') {
-            $q->where('is_freelance', true);
-        }
-    });
+    use ApiResponseTrait;
+    public function __construct(private readonly EmployeeService $employeeService) {}
 
-    $employees = $query->latest()->paginate(15);
 
-    return response()->json([
-        'message' => 'Employees fetched successfully',
-        'data' => EmployeeResource::collection($employees),
-        'meta' => [
-            'current_page' => $employees->currentPage(),
-            'last_page' => $employees->lastPage(),
-            'total' => $employees->total(),
-        ]
-    ], 200);
-}
+    public function index(Request $request) : JsonResponse
+    {
+        $employees = $this->employeeService->getEmployees($request);
+        return $this->successResponse(EmployeeResource::collection($employees), 'Employees fetched successfully');
+    }
+
+
+    public function store(StoreEmployeeRequest $request) : JsonResponse
+    {
+        $employee = $this->employeeService->createEmployee($request->validated());
+        return $this->successResponse(new EmployeeResource($employee), 'Employee created successfully', 201);
+    }
+    public function show(Employee $employee) : JsonResponse
+    {
+        return $this->successResponse(new EmployeeResource($employee), 'Employee found successfully');
+    }
+    public function update(UpdateEmployeeRequest $request, Employee $employee) : JsonResponse
+    {
+        $employee = $this->employeeService->updateEmployee($employee->id, $request->validated());
+        return $this->successResponse(new EmployeeResource($employee), 'Employee updated successfully');
+    }
+    public function destroy(Employee $employee) : JsonResponse
+    {
+        $employee = $this->employeeService->deleteEmployee($employee->id);
+        return $this->successResponse(new EmployeeResource($employee), 'Employee deleted successfully');
+    }
 }

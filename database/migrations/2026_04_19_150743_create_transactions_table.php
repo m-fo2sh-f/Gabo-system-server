@@ -15,7 +15,7 @@ return new class extends Migration
         $table->id();
         
         $table->enum('type', ['income', 'expense']);
-        $table->string('category'); // (task_payment, manual_collection, salary, ads, etc.)
+        $table->string('category'); 
         $table->decimal('amount', 12, 2);
         $table->string('payment_method')->default('cash');
         $table->date('transaction_date');

@@ -27,4 +27,20 @@ class Client extends Model
         'contract_start_date' => 'date',
         'next_payment_date' => 'date',
     ];
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
+    public function employees()
+    {
+        return $this->hasMany(Employee::class);
+    }
+
 }

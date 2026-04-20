@@ -4,6 +4,14 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+
+// services imports
+use App\Services\ClientService;
+
+// traits imports
+use App\Traits\ApiResponseTrait;
+
 // requests imports
 use App\Http\Requests\Api\Client\StoreClientRequest;
 use App\Http\Requests\Api\Client\UpdateClientRequest;
@@ -16,65 +24,42 @@ use App\Models\Client;
 
 
 
+
 class ClientController extends Controller
+
 {
-    public function index(Request $request)
-{
-    $query = Client::query();
+    use ApiResponseTrait;
 
-    $query->when($request->filled('search'), function ($q) use ($request) {
-        $q->where('name', 'like', '%' . $request->search . '%')
-        ->orWhere('phone', 'like', '%' . $request->search . '%');
-    });
-    $query->when($request->filled('status'), function ($q) use ($request) {
-        $q->where('status', $request->status);
-    }); 
-    $clients = $query->latest()->paginate(15);
 
-    return response()->json([
-        'message' => 'Clients fetched successfully',
-        'data' => ClientResource::collection($clients),
-        'meta' => [
-            'current_page' => $clients->currentPage(),
-            'last_page' => $clients->lastPage(),
-            'total' => $clients->total(),
-        ]
-    ], 200);
-}
+    public function __construct(private readonly ClientService $clientService){}
 
-    public function store(StoreClientRequest $request)
+    public function index(Request $request) : JsonResponse
     {
-        $data = $request->validated();
-        $client = Client::create($data);
-        return response()->json([
-            'message' => 'Client created successfully',
-            'data' => ClientResource::make($client)
-        ],201);
+        $clients =$this->clientService->getAllClients($request);
+        return $this->successResponse(ClientResource::collection($clients), 'Clients fetched successfully');
     }
 
-    public function show(Client $client)
+    public function store(StoreClientRequest $request) : JsonResponse
     {
-        return response()->json([
-            'message' => 'Client found successfully',
-            'data' => ClientResource::make($client)
-        ], 200);
+        $client = $this->clientService->createClient($request->validated());
+        return $this->successResponse(new ClientResource($client), 'Client created successfully', 201);
     }
 
-    public function update(UpdateClientRequest $request, Client $client)
+    public function show(Client $client) : JsonResponse
+    {
+        return $this->successResponse(new ClientResource($client), 'Client found successfully');
+    }
+
+    public function update(UpdateClientRequest $request, Client $client) : JsonResponse
     {
         $data = $request->validated();
-        return response()->json([
-            'message' => 'Client updated successfully',
-            'data' => ClientResource::make($client) 
-        ], 200);
+        return $this->successResponse(new ClientResource($client), 'Client updated successfully');
         
     }
 
-    public function destroy(Client $client)
+    public function destroy(Client $client) : JsonResponse
     {
         $client->delete();
-        return response()->json([
-            'message' => 'Client deleted successfully',
-        ], 200);
+        return $this->successResponse(new ClientResource($client), 'Client deleted successfully');
     }
 }

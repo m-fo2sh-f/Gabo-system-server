@@ -10,7 +10,6 @@ class Employee extends Model
     use HasFactory;
     protected $fillable = [
         'name',
-        'email',
         'phone',
         'address',
         'employment_type',
@@ -20,4 +19,32 @@ class Employee extends Model
         'status',
         'notes',
     ];
+    protected $casts = [
+        'job_title_id' => 'integer',
+        'is_freelance' => 'boolean',
+    ];
+    public function jobTitle()
+    {
+        return $this->belongsTo(JobTitle::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transaction::class);
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class);
+    }
+
+    public function clients()
+    {
+        return $this->belongsToMany(Client::class, 'client_employees', 'employee_id', 'client_id');
+    }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

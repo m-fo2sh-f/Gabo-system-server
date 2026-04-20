@@ -13,6 +13,8 @@ return new class extends Migration
 {
     Schema::create('tasks', function (Blueprint $table) {
         $table->id();
+        $table->string('name');
+        
         
         // العلاقات
         $table->foreignId('client_id')->constrained()->cascadeOnDelete();

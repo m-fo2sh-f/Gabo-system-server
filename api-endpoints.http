@@ -1,0 +1,136 @@
+@baseUrl = http://localhost:8000/api/v1
+
+###
+# CLIENTS
+###
+
+# Get all clients
+GET {{baseUrl}}/clients
+Accept: application/json
+
+###
+
+# Create a new client
+POST {{baseUrl}}/clients
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Acme Corp",
+  "brand_name": "Acme Updates",
+  "address": "123 Main St, Tech City",
+  "phone": "123-456-7890",
+  "contract_start_date": "2026-05-01",
+  "contract_value": 50000.00,
+  "payment_cycle": "monthly",
+  "status": "active",
+  "social_links": [
+    {
+      "platform": "website",
+      "url": "https://acme-corp.com"
+    },
+    {
+      "platform": "linkedin",
+      "url": "https://linkedin.com/company/acme"
+    }
+  ],
+  "notes": "Premium client requiring weekly syncs."
+}
+
+###
+
+# Get a specific client
+GET {{baseUrl}}/clients/1
+Accept: application/json
+
+###
+
+# Update a specific client
+PUT {{baseUrl}}/clients/1
+Content-Type: application/json
+Accept: application/json
+
+{
+  "name": "Acme Corporation",
+  "phone": "987-654-3210",
+  "status": "paused"
+}
+
+###
+
+# Delete a specific client
+DELETE {{baseUrl}}/clients/1
+Accept: application/json
+
+
+###
+# EMPLOYEES
+###
+
+# Create a new employee
+POST {{baseUrl}}/employees
+Content-Type: application/json
+Accept: application/json
+
+{
+  "is_freelance": false,
+  "name": "Jane Doe",
+  "phone": "555-0199",
+  "job_title": "Senior Developer",
+  "base_salary": 8000.00,
+  "employee_status": "active",
+  "notes": "Joined the frontend team."
+}
+
+
+###
+# TASKS
+###
+
+# Create a new task
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+Accept: application/json
+
+{
+  "client_id": 1,
+  "employee_id": 1,
+  "task_type": "development",
+  "status": "pending",
+  "price": 1000.00,
+  "cost": 150.00,
+  "notes": "Build the new dashboard module."
+}
+
+
+###
+# TRANSACTIONS
+###
+
+# Get all transactions
+GET {{baseUrl}}/transactions
+Accept: application/json
+
+###
+
+# Create a new transaction
+POST {{baseUrl}}/transactions
+Content-Type: application/json
+Accept: application/json
+
+{
+  "type": "income",
+  "category": "task_payment",
+  "amount": 1000.00,
+  "payment_method": "instapay",
+  "transaction_date": "2026-04-20",
+  "notes": "Initial milestone payment.",
+  "client_id": 1,
+  "task_id": 1
+}
+
+###
+
+# Delete a transaction
+DELETE {{baseUrl}}/transactions/1
+Accept: application/json

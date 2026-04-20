@@ -21,6 +21,7 @@ class TaskFactory extends Factory
     {
         return [
             'client_id' => Client::factory(),
+            'name' => fake()->name(),
             'employee_id' => Employee::factory(),
             'task_type_id' => TaskType::factory(),
             'price' => fake()->randomFloat(2, 1000, 5000),
