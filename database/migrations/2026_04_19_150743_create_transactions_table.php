@@ -20,11 +20,12 @@ return new class extends Migration
         $table->string('payment_method')->default('cash');
         $table->date('transaction_date');
         
-        // المفاتيح الأجنبية (كلها Nullable عشان تناسب أي نوع معاملة)
+        
         $table->foreignId('client_id')->nullable()->constrained('clients')->nullOnDelete();
         $table->foreignId('employee_id')->nullable()->constrained('employees')->nullOnDelete();
         $table->foreignId('task_id')->nullable()->constrained('tasks')->nullOnDelete();
         
+
         // مين من الأدمنز اللي سجل المعاملة (صاحب الشركة)
         $table->foreignId('user_id')->nullable()->constrained('users')->nullOnDelete(); 
         

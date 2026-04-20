@@ -24,6 +24,10 @@ return new class extends Migration
         $table->enum('payment_cycle', ['one_time', 'weekly', 'monthly'])->default('monthly');
         $table->enum('status', ['active', 'paused', 'stopped'])->default('active');
         $table->date('next_payment_date')->nullable();
+
+        $table->boolean('is_late')->default(false);
+        // amout of late money
+        $table->decimal('late_amount', 12, 2)->default(0);
         
         $table->json('social_links')->nullable(); // بيحفظ الـ Array اللي جاية من الرياكت أوتوماتيك
         $table->text('notes')->nullable();

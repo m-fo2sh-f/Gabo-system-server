@@ -23,7 +23,12 @@ class StoreTaskRequest extends FormRequest
             'status' => ['nullable', new Enum(TaskStatus::class)],
             'price' => ['required', 'numeric'],
             'cost' => ['nullable', 'numeric'],
-            'notes' => ['nullable', 'string']
+            'notes' => ['nullable', 'string'],
+            'name' => ['nullable', 'string', 'max:255'],
+            'start_date' => ['nullable', 'date'],
+            'end_date' => ['nullable', 'date'],
+            'task_type_id' => ['nullable', 'integer', 'exists:task_types,id'],
+            
         ];
     }
     

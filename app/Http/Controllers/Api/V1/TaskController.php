@@ -9,7 +9,7 @@ use App\Services\TaskService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
+use App\Models\Task;
 class TaskController extends Controller
 {
     use ApiResponseTrait;
@@ -33,9 +33,9 @@ class TaskController extends Controller
     {
         return $this->successResponse(new TaskResource($task));
     }
-    public function update(UpdateTaskRequest $request, Task $task): JsonResponse
+    public function update(Request $request, Task $task): JsonResponse
     {
-        $task = $this->taskService->updateTask($task->id, $request->validated());
+        $task = $this->taskService->updateTask($task->id, $request->all());
         return $this->successResponse(new TaskResource($task), 'Task updated successfully', 200);
     }
     public function destroy(Task $task): JsonResponse

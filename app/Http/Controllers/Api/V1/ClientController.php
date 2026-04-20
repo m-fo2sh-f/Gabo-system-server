@@ -52,7 +52,7 @@ class ClientController extends Controller
 
     public function update(UpdateClientRequest $request, Client $client) : JsonResponse
     {
-        $data = $request->validated();
+        $client = $this->clientService->updateClient($client->id, $request->validated());
         return $this->successResponse(new ClientResource($client), 'Client updated successfully');
         
     }

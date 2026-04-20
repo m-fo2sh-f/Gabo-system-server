@@ -22,6 +22,10 @@ class UpdateClientRequest extends FormRequest
             'brand_name' => ['nullable', 'string', 'max:255'],
             'address' => ['nullable', 'string', 'max:255'],
             'phone' => ['sometimes', 'required', 'string', 'max:20'],
+            'is_late' => ['nullable', 'boolean'],
+            'late_amount' => ['nullable', 'numeric'],
+            'next_payment_date' => ['nullable', 'date'],
+            
             'contract_start_date' => ['nullable', 'date'],
             'contract_value' => ['nullable', 'numeric'],
             'payment_cycle' => ['nullable', new Enum(PaymentCycle::class)],

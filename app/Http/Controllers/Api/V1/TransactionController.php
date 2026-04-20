@@ -8,6 +8,7 @@ use App\Http\Resources\TransactionResource;
 use App\Services\TransactionService;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class TransactionController extends Controller
 {
@@ -17,10 +18,10 @@ class TransactionController extends Controller
     {
     }
 
-    public function index(): JsonResponse
+    public function index(Request $request): JsonResponse
     {
-        $transactions = $this->transactionService->getAllTransactions();
-        return $this->successResponse(TransactionResource::collection($transactions));
+        $transactions = $this->transactionService->getAllTransactions($request);
+        return $this->successResponse(TransactionResource::collection($transactions), 'Transactions fetched successfully');
     }
 
     public function show(int $id): JsonResponse
@@ -33,10 +34,15 @@ class TransactionController extends Controller
         $transaction = $this->transactionService->createTransaction($request->validated());
         return $this->successResponse(new TransactionResource($transaction), 'Transaction created successfully', 201);
     }
+    public function update(Request $request, int $id): JsonResponse
+    {
+        $transaction = $this->transactionService->updateTransaction($id , $request->all());
+        return $this->successResponse(new TransactionResource($transaction), 'Transaction updated successfully', 200);
+    }
 
     public function destroy(int $id): JsonResponse
     {
         $this->transactionService->deleteTransaction($id);
-        return $this->successResponse(null, 'Transaction deleted successfully');
+        return $this->successResponse(new TransactionResource($transaction), 'Transaction deleted successfully');
     }
 }

@@ -14,6 +14,8 @@ class Client extends Model
         'brand_name',
         'address',
         'contract_start_date',
+        'late_amount',
+        'is_late',
         'contract_value',
         'payment_cycle',
         'status',
@@ -24,6 +26,8 @@ class Client extends Model
 
     protected $casts = [
         'social_links' => 'array',
+        'is_late' => 'boolean',
+    'late_amount' => 'decimal:2',
         'contract_start_date' => 'date',
         'next_payment_date' => 'date',
     ];

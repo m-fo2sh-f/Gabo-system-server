@@ -4,6 +4,9 @@ namespace App\Http\Requests\Api\Employee;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use App\Enums\EmployeeStatus;
+use Illuminate\Validation\Rules\Enum;
+
 
 class UpdateEmployeeRequest extends FormRequest
 {
@@ -12,7 +15,7 @@ class UpdateEmployeeRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -23,7 +26,18 @@ class UpdateEmployeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'employment_type' => ['nullable', 'string', 'max:255'],
+            'base_salary' => ['nullable', 'numeric', 'nullable'],
+            'commission_rate' => ['nullable', 'numeric', 'nullable'],
+            'job_title_id' => ['nullable', 'integer', 'nullable'],
+            'status' => ['nullable', 'string', 'max:255'],
+            'name' => ['nullable', 'string', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:20'],
+            'job_title' => ['nullable', 'string', 'max:255'],
+            'commission_rate' => ['nullable', 'numeric', 'nullable'],
+            'base_salary' => ['nullable', 'numeric', 'nullable'],
+            'employee_status' => ['nullable', new Enum(EmployeeStatus::class)],
+            'notes' => ['nullable', 'string']
         ];
     }
 }

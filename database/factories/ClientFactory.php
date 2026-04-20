@@ -24,6 +24,8 @@ class ClientFactory extends Factory
             'contract_start_date' => fake()->date(),
             'contract_value' => fake()->randomFloat(2, 1000, 10000),
             'payment_cycle' => fake()->randomElement(['one_time', 'weekly', 'monthly']),
+            'late_amount' => 0,
+            'is_late' => false,
             'status' => fake()->randomElement(['active', 'paused', 'stopped']),
             'next_payment_date' => fake()->date(),
             'social_links' => [

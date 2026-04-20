@@ -8,17 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Employee extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'name',
-        'phone',
-        'address',
-        'employment_type',
-        'job_title_id',
-        'is_freelance',
-        'commission_rate',
-        'status',
-        'notes',
-    ];
+    protected $guarded = [];
     protected $casts = [
         'job_title_id' => 'integer',
         'is_freelance' => 'boolean',

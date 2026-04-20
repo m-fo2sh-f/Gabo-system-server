@@ -16,12 +16,16 @@ class StoreEmployeeRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'is_freelance' => ['required', 'boolean'],
-            'name' => ['required', 'string', 'max:255'],
+            'employment_type' => ['nullable', 'string', 'max:255'],
+            'base_salary' => ['nullable', 'numeric', 'nullable'],
+            'commission_rate' => ['nullable', 'numeric', 'nullable'],
+            'job_title_id' => ['nullable', 'integer', 'nullable'],
+            'status' => ['nullable', 'string', 'max:255'],
+            'name' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
             'job_title' => ['nullable', 'string', 'max:255'],
-            'commission_rate' => ['required_if:is_freelance,true', 'numeric', 'nullable'],
-            'base_salary' => ['required_if:is_freelance,false', 'numeric', 'nullable'],
+            'commission_rate' => ['nullable', 'numeric', 'nullable'],
+            'base_salary' => ['nullable', 'numeric', 'nullable'],
             'employee_status' => ['nullable', new Enum(EmployeeStatus::class)],
             'notes' => ['nullable', 'string']
         ];

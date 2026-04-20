@@ -16,6 +16,8 @@ class ClientResource extends JsonResource
             'brand_name' => $this->brand_name,
             'address' => $this->address,
             'contract_start_date' => $this->contract_start_date,
+            'late_amount' => $this->late_amount,
+            'is_late' => $this->is_late,
             'contract_value' => $this->contract_value !== null ? (float) $this->contract_value : null,
             'payment_cycle' => $this->payment_cycle,
             'status' => $this->status,
