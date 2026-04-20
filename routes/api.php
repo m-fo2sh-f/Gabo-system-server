@@ -6,14 +6,13 @@ use App\Http\Controllers\Api\V1\ClientController;
 use App\Http\Controllers\Api\V1\EmployeeController;
 use App\Http\Controllers\Api\V1\TaskController;
 use App\Http\Controllers\Api\V1\TransactionController;
+use App\Http\Controllers\Auth\AuthController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
-
-Route::prefix('v1')->group(function () {
+Route::post('/login', [AuthController::class, 'login']);
+Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
     Route::apiResource('clients', ClientController::class);
     Route::apiResource('employees', EmployeeController::class);
     Route::apiResource('tasks', TaskController::class);
     Route::apiResource('transactions', TransactionController::class);
+    
 });

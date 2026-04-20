@@ -10,6 +10,7 @@ use App\Models\TaskType;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class DatabaseSeeder extends Seeder
 {
@@ -19,11 +20,11 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // 1. Create a default admin user
-        $admin = User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@admin.com',
-            'password' => bcrypt('password'),
-        ]);
+        User::create([
+    'name' => 'gabo',
+    'email' => 'client@gabo.com',
+    'password' => Hash::make('password123'), // الباسورد لازم يتشفر
+]);
 
         // 2. Seed Lookups / Parent Tables (10 records each)
         $jobTitles = JobTitle::factory(5)->create();
