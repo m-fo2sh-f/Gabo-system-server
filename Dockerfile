@@ -1,5 +1,5 @@
-# هنبدأ بنسخة PHP فيها Apache جاهز
-FROM php:8.2-apache
+# هنحدث النسخة لـ 8.3 عشان توافق Laravel 13
+FROM php:8.3-apache
 
 # تثبيت الإضافات اللي Laravel بيحتاجها
 RUN apt-get update && apt-get install -y \
@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
 # تثبيت الـ PHP Extensions
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# تفعيل الـ Apache Rewrite Module (عشان الـ Routing في لارافيل يشتغل)
+# تفعيل الـ Apache Rewrite Module
 RUN a2enmod rewrite
 
 # تغيير الـ Document Root ليكون فولدر الـ public بتاع لارافيل
@@ -27,12 +27,14 @@ COPY . /var/www/html
 
 # تثبيت Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-interaction --optimize-autoloader --no-dev
 
-# تظبيط الصلاحيات (مهم جداً عشان السيرفر يعرف يكتب في الـ Storage)
+# تظبيط الصلاحيات
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
-# السيرفر هيشتغل على بورت 7860 (ده اللي Hugging Face بيفهمه)
+# تشغيل الـ Composer وتثبيت المكتبات
+RUN composer install --no-interaction --optimize-autoloader --no-dev
+
+# السيرفر هيشتغل على بورت 7860
 EXPOSE 7860
 RUN sed -i 's/80/7860/g' /etc/apache2/ports.conf /etc/apache2/sites-available/*.conf
 
