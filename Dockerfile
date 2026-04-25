@@ -42,6 +42,11 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
 # ============================================================
 COPY . /var/www/html
 
+# حذف الـ cached package manifest القديم عشان Laravel يعمل discovery من أول
+# بالـ packages الفعلية (بدون dev packages)
+RUN rm -f /var/www/html/bootstrap/cache/packages.php \
+         /var/www/html/bootstrap/cache/services.php
+
 # ============================================================
 # 5. تثبيت Composer والـ Dependencies
 #    --no-scripts مهم جداً عشان نمنع Laravel من تشغيل
