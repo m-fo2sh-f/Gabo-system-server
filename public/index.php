@@ -1,5 +1,5 @@
 <?php
-die('<h1 style="color:blue;">Hello Fo2sh! Apache is 100% Innocent!</h1>');
+
 use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
 
