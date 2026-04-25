@@ -31,6 +31,10 @@ DB_PASSWORD=${DB_PASSWORD}
 BROADCAST_CONNECTION=${BROADCAST_CONNECTION:-log}
 FILESYSTEM_DISK=${FILESYSTEM_DISK:-local}
 QUEUE_CONNECTION=sync
+
+# مهم جداً: نستخدم file لأي driver يحتاج DB
+# عشان نمنع crash وقت الـ startup قبل ما الـ DB يكون ready
+CACHE_STORE=file
 SESSION_DRIVER=file
 SESSION_LIFETIME=${SESSION_LIFETIME:-120}
 SESSION_ENCRYPT=${SESSION_ENCRYPT:-false}
@@ -47,11 +51,11 @@ EOF
 echo "✅ .env file created from environment variables"
 
 # ============================================================
-# 2. نمسح أي config cache قديم من وقت البيلد
+# 2. نمسح الـ config cache القديم فقط (بدون cache:clear)
+#    cache:clear بتحاول تتصل بالـ DB لو CACHE_STORE=database
 # ============================================================
 cd /var/www/html
 php artisan config:clear
-php artisan cache:clear
 echo "✅ Config cache cleared"
 
 # ============================================================
