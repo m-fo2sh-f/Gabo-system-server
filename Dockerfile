@@ -77,8 +77,8 @@ RUN mkdir -p \
 # 8. تغيير البورت من 80 إلى 7860 (مطلوب لـ Hugging Face)
 # ============================================================
 EXPOSE 7860
-RUN sed -i 's/80/7860/g' \
-        /etc/apache2/ports.conf \
+RUN sed -i 's/^Listen 80$/Listen 7860/' /etc/apache2/ports.conf && \
+    sed -i 's/<VirtualHost \*:80>/<VirtualHost *:7860>/' \
         /etc/apache2/sites-available/*.conf
 
 # ============================================================
