@@ -4,8 +4,7 @@ set -e
 echo "🚀 Starting Gabo System..."
 
 # ============================================================
-# الـ DB credentials الفعلية من Aiven (hardcoded as fallback)
-# لأن HF Secrets مش بتتحقن في الـ shell environment
+# تحديد القيم الفعلية (مع fallback للـ Aiven credentials)
 # ============================================================
 _DB_HOST="${DB_HOST:-mysql-1ee91562-gabo-system.c.aivencloud.com}"
 _DB_PORT="${DB_PORT:-21621}"
@@ -16,7 +15,27 @@ _APP_KEY="${APP_KEY:-base64:ZQcTP1iJ8J1bbeWmQcymN5x+4aNCyODGtRdELis4vzw=}"
 _APP_URL="${APP_URL:-https://m-fo2sh-f-fo2sh-laravel-api.hf.space}"
 
 # ============================================================
-# كتابة الـ .env
+# المهم: نعمل export للـ shell env vars بالقيم الصح
+# لأن Laravel بيستخدم createImmutable() اللي ما بيعيدش
+# تحميل المتغيرات اللو كانت موجودة في الـ shell (حتى لو فارغة)
+# ============================================================
+export DB_CONNECTION="mysql"
+export DB_HOST="$_DB_HOST"
+export DB_PORT="$_DB_PORT"
+export DB_DATABASE="$_DB_DATABASE"
+export DB_USERNAME="$_DB_USERNAME"
+export DB_PASSWORD="$_DB_PASSWORD"
+export APP_KEY="$_APP_KEY"
+export APP_URL="$_APP_URL"
+export APP_ENV="production"
+export APP_DEBUG="false"
+export CACHE_STORE="file"
+export SESSION_DRIVER="file"
+export QUEUE_CONNECTION="sync"
+export MYSQL_ATTR_SSL_CA="/var/www/html/aiven-ca.crt"
+
+# ============================================================
+# كتابة الـ .env (للـ Apache + Laravel HTTP requests)
 # ============================================================
 cat > /var/www/html/.env << ENVEOF
 APP_NAME="Gabo System"
@@ -53,13 +72,14 @@ TELEGRAM_BACKUP_BOT_TOKEN=${TELEGRAM_BACKUP_BOT_TOKEN:-}
 ENVEOF
 
 echo "✅ .env file created"
-echo "🔍 DB_HOST=$(grep '^DB_HOST=' /var/www/html/.env | cut -d= -f2)"
-echo "🔍 DB_PORT=$(grep '^DB_PORT=' /var/www/html/.env | cut -d= -f2)"
+echo "🔍 DB_HOST=$_DB_HOST"
+echo "🔍 DB_PORT=$_DB_PORT"
+echo "🔍 DB_DATABASE=$_DB_DATABASE"
 
 cd /var/www/html
 
 # ============================================================
-# Cache config
+# Cache config (الآن بيقرأ من shell env الصح)
 # ============================================================
 php artisan config:cache
 echo "✅ Config cached"
