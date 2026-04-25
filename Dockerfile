@@ -1,38 +1,91 @@
-FROM php:8.3-apache
+FROM php:8.2-apache
 
-# 1. تثبيت الإضافات المطلوبة للارافيل
+# ============================================================
+# 1. تثبيت الـ System Dependencies
+# ============================================================
 RUN apt-get update && apt-get install -y \
-    libpng-dev libonig-dev libxml2-dev zip unzip git curl
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    zip \
+    unzip \
+    git \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
+# ============================================================
+# 2. تثبيت الـ PHP Extensions
+# ============================================================
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+
+# ============================================================
+# 3. تفعيل الـ Apache Rewrite (مهم لـ Laravel routing)
+#    وتغيير الـ Document Root لـ /public
+# ============================================================
 RUN a2enmod rewrite
 
-# 2. تظبيط الأباتشي والـ Document Root
-ENV APACHE_DOCUMENT_ROOT /var/www/html/public
-RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
-RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
-RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/public
 
-# 3. 🚨 السطر السحري: إجبار PHP على قراءة متغيرات البيئة (System Environment)
-RUN echo 'variables_order = "EGPCS"' >> /usr/local/etc/php/conf.d/docker-php-vars.ini
+RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
+        /etc/apache2/sites-available/*.conf && \
+    sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' \
+        /etc/apache2/apache2.conf \
+        /etc/apache2/conf-available/*.conf && \
+    sed -i 's/AllowOverride None/AllowOverride All/g' \
+        /etc/apache2/apache2.conf
 
+# ============================================================
 # 4. نسخ ملفات المشروع
+# ============================================================
 COPY . /var/www/html
 
-# 5. تسطيب مكتبات الكومبوزر
+# ============================================================
+# 5. تثبيت Composer والـ Dependencies
+#    --no-scripts مهم جداً عشان نمنع Laravel من تشغيل
+#    config:cache وقت البيلد (لأن الـ DB credentials مش موجودة)
+# ============================================================
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
-RUN composer install --no-interaction --optimize-autoloader --no-dev --no-scripts
 
-# 6. إنشاء الفولدرات وصلاحيات الأباتشي
-RUN mkdir -p storage/framework/sessions storage/framework/views storage/framework/cache storage/logs bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+RUN cd /var/www/html && \
+    composer install \
+        --no-interaction \
+        --no-dev \
+        --no-scripts \
+        --prefer-dist \
+        --optimize-autoloader
 
-# 7. 🚨 منع لارافيل من البحث عن ملف .env (هنعتمد على السيكريتس مباشرة)
-# لو عندك ملف .env.example هنمسحه أو نفضيه عشان ميعملش Conflict مع سيكريتس السيرفر
-RUN rm -f .env
+# ============================================================
+# 6. إعداد ملف .env أساسي (هيتبدل بالكامل في وقت التشغيل)
+#    بس Laravel محتاجه عشان يبدأ
+# ============================================================
+RUN cp /var/www/html/.env.example /var/www/html/.env
 
+# ============================================================
+# 7. إنشاء المجلدات المطلوبة وضبط الصلاحيات
+# ============================================================
+RUN mkdir -p \
+        /var/www/html/storage/framework/sessions \
+        /var/www/html/storage/framework/views \
+        /var/www/html/storage/framework/cache \
+        /var/www/html/storage/logs \
+        /var/www/html/bootstrap/cache && \
+    chown -R www-data:www-data /var/www/html && \
+    chmod -R 755 /var/www/html && \
+    chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# ============================================================
+# 8. تغيير البورت من 80 إلى 7860 (مطلوب لـ Hugging Face)
+# ============================================================
 EXPOSE 7860
-RUN sed -i 's/80/7860/g' /etc/apache2/ports.conf /etc/apache2/sites-available/*.conf
+RUN sed -i 's/80/7860/g' \
+        /etc/apache2/ports.conf \
+        /etc/apache2/sites-available/*.conf
 
-CMD ["apache2-foreground"]
+# ============================================================
+# 9. نسخ وتفعيل الـ Entrypoint Script
+#    هو اللي هيشتغل أول ما الـ Container يبدأ
+# ============================================================
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+CMD ["/usr/local/bin/docker-entrypoint.sh"]
