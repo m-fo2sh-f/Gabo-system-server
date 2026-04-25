@@ -40,7 +40,9 @@ RUN chmod -R 777 /var/www/html
 
 # تسطيب الكومبوزر
 RUN composer install --no-interaction --optimize-autoloader --no-dev --no-scripts
-
+ENV SESSION_DRIVER=cookie
+ENV CACHE_STORE=file
+ENV QUEUE_CONNECTION=sync
 EXPOSE 7860
 RUN sed -i 's/80/7860/g' /etc/apache2/ports.conf /etc/apache2/sites-available/*.conf
 
