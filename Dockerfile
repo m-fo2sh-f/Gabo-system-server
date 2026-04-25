@@ -42,10 +42,8 @@ RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' \
 # ============================================================
 COPY . /var/www/html
 
-# حذف الـ cached package manifest القديم عشان Laravel يعمل discovery من أول
-# بالـ packages الفعلية (بدون dev packages)
-RUN rm -f /var/www/html/bootstrap/cache/packages.php \
-         /var/www/html/bootstrap/cache/services.php
+# نسخ الـ Aiven CA Certificate للـ SSL connection
+COPY aiven-ca.crt /var/www/html/aiven-ca.crt
 
 # ============================================================
 # 5. تثبيت Composer والـ Dependencies
