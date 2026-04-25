@@ -1,0 +1,268 @@
+@baseUrl = http://localhost:8000/api/v1
+@apiBase = http://localhost:8000/api
+@token = paste_your_sanctum_token_here
+
+###
+### Auth
+###
+
+# Login
+POST {{apiBase}}/login
+Content-Type: application/json
+Accept: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "password"
+}
+
+###
+
+# Get Authenticated User
+GET {{baseUrl}}/user
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+### Clients
+###
+
+# Get All Clients (with filters)
+GET {{baseUrl}}/clients?search=Tech&status=active
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# Get Client By ID
+GET {{baseUrl}}/clients/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# Create Client
+POST {{baseUrl}}/clients
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Jane Doe",
+  "brand_name": "Doe Inc.",
+  "address": "123 Main St",
+  "phone": "+1234567890",
+  "contract_start_date": "2026-01-01",
+  "contract_value": 5000.00,
+  "payment_cycle": "monthly",
+  "status": "active",
+  "social_links": [
+    {
+      "platform": "facebook",
+      "url": "https://facebook.com/doe"
+    }
+  ],
+  "notes": "Premium client"
+}
+
+###
+
+# Update Client
+PUT {{baseUrl}}/clients/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Jane Doe Updated",
+  "phone": "+0987654321"
+}
+
+###
+
+# Delete Client
+DELETE {{baseUrl}}/clients/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+
+###
+### Employees
+###
+
+# Get All Employees (with filters)
+GET {{baseUrl}}/employees?search=John&type=full_time
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# Get Employee By ID
+GET {{baseUrl}}/employees/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# Create Employee
+POST {{baseUrl}}/employees
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "John Smith",
+  "phone": "+1234567890",
+  "employment_type": "full_time",
+  "base_salary": 6000.00,
+  "commission_rate": 5.0,
+  "job_title_id": 1,
+  "employee_status": "active",
+  "notes": "Lead Developer"
+}
+
+###
+
+# Update Employee
+PUT {{baseUrl}}/employees/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "base_salary": 6500.00
+}
+
+###
+
+# Delete Employee
+DELETE {{baseUrl}}/employees/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+
+###
+### Tasks
+###
+
+# Get All Tasks (with filters)
+GET {{baseUrl}}/tasks?search=Website&client_id=1&employee_id=2
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# Get Task By ID
+GET {{baseUrl}}/tasks/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# Create Task
+POST {{baseUrl}}/tasks
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "name": "Website Development",
+  "client_id": 1,
+  "employee_id": 2,
+  "task_type_id": 1,
+  "status": "pending",
+  "price": 1200.00,
+  "cost": 100.00,
+  "start_date": "2026-05-01",
+  "end_date": "2026-06-01",
+  "notes": "Urgent project"
+}
+
+###
+
+# Update Task
+PUT {{baseUrl}}/tasks/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "status": "completed",
+  "price": 1500.00
+}
+
+###
+
+# Delete Task
+DELETE {{baseUrl}}/tasks/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+
+###
+### Transactions
+###
+
+# Get All Transactions (with filters)
+GET {{baseUrl}}/transactions?type=expense&category=ads
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# Get Transaction By ID
+GET {{baseUrl}}/transactions/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+###
+
+# Create Transaction
+POST {{baseUrl}}/transactions
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "type": "income",
+  "category": "sales",
+  "amount": 1500.00,
+  "payment_method": "cash",
+  "transaction_date": "2026-04-21",
+  "client_id": 1,
+  "employee_id": 2,
+  "task_id": 3,
+  "notes": "Payment received"
+}
+
+###
+
+# Update Transaction
+PUT {{baseUrl}}/transactions/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
+
+{
+  "amount": 1600.00
+}
+
+###
+
+# Delete Transaction
+DELETE {{baseUrl}}/transactions/1
+Content-Type: application/json
+Accept: application/json
+Authorization: Bearer {{token}}
