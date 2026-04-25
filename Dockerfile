@@ -1,6 +1,6 @@
 FROM php:8.3-apache
 
-# تثبيت الإضافات
+# تثبيت الإضافات الأساسية
 RUN apt-get update && apt-get install -y \
     libpng-dev \
     libonig-dev \
@@ -10,37 +10,41 @@ RUN apt-get update && apt-get install -y \
     git \
     curl
 
-# تثبيت الـ PHP Extensions
+# تثبيت إضافات PHP
 RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
 
-# تفعيل الـ Apache Rewrite
+# تفعيل Rewrite Module
 RUN a2enmod rewrite
 
-# تغيير مسار الـ Document Root
+# تظبيط مسار لارافيل
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
 RUN sed -ri -e 's!/var/www/html!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/sites-available/*.conf
 RUN sed -ri -e 's!/var/www/!${APACHE_DOCUMENT_ROOT}!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
 
+# السر هنا: إجبار الأباتشي إنه يقبل الـ .htaccess بتاع لارافيل
+RUN sed -i 's/AllowOverride None/AllowOverride All/g' /etc/apache2/apache2.conf
+
 # نسخ الملفات
 COPY . /var/www/html
 
-# تثبيت Composer
+# تحميل Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# إجبار السيرفر على إنشاء فولدرات التخزين الأساسية عشان لارافيل ما يقعش
+# بناء الفولدرات الأساسية يدوياً عشان لارافيل ميكراشش
 RUN mkdir -p /var/www/html/storage/framework/sessions \
     && mkdir -p /var/www/html/storage/framework/views \
     && mkdir -p /var/www/html/storage/framework/cache \
     && mkdir -p /var/www/html/storage/logs \
     && mkdir -p /var/www/html/bootstrap/cache
 
-# إعطاء صلاحيات كاملة 777 للفولدرات دي
+# تظبيط الصلاحيات 
+RUN chown -R www-data:www-data /var/www/html
 RUN chmod -R 777 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# تثبيت مكتبات لارافيل
-RUN composer install --no-interaction --optimize-autoloader --no-dev
+# السر التاني: تشغيل الكومبوزر بدون السكريبتات عشان ميسألش على الداتا بيز وقت البناء
+RUN composer install --no-interaction --optimize-autoloader --no-dev --no-scripts
 
-# فتح بورت 7860
+# تظبيط البورت
 EXPOSE 7860
 RUN sed -i 's/80/7860/g' /etc/apache2/ports.conf /etc/apache2/sites-available/*.conf
 
