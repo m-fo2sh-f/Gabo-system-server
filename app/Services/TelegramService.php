@@ -23,7 +23,11 @@ class TelegramService
     public function sendMessage(string $message): bool
     {
         try {
-            $response = Http::withoutVerifying()->post($this->apiUrl, [
+            $response = Http::withoutVerifying()->withOptions([
+                'curl' => [
+                    CURLOPT_IPRESOLVE => CURL_IPRESOLVE_V4,
+                ],
+            ])->timeout(30)->post($this->apiUrl, [
                 'chat_id' => $this->chatId,
                 'text' => $message,
                 'parse_mode' => 'HTML', // عشان تقدر تنسق الرسالة بـ HTML
