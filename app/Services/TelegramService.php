@@ -14,7 +14,8 @@ class TelegramService
     {
         $this->token = config('telegram.bot_token');
         $this->chatId = config('telegram.chat_id');
-        $this->apiUrl = "https://api.telegram.org/bot{$this->token}/sendMessage";
+        $baseUrl = config('telegram.api_url', 'https://api.telegram.org');
+        $this->apiUrl = "{$baseUrl}/bot{$this->token}/sendMessage";
     }
 
     /**
