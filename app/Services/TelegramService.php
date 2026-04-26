@@ -12,8 +12,8 @@ class TelegramService
 
     public function __construct()
     {
-        $this->token = env('TELEGRAM_BOT_TOKEN');
-        $this->chatId = env('TELEGRAM_CHAT_ID');
+        $this->token = config('telegram.bot_token');
+        $this->chatId = config('telegram.chat_id');
         $this->apiUrl = "https://api.telegram.org/bot{$this->token}/sendMessage";
     }
 

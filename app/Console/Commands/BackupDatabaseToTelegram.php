@@ -22,11 +22,11 @@ class BackupDatabaseToTelegram extends Command
 
         try {
             // 2. سحب بيانات الاتصال من ملف الـ .env
-            $host = env('DB_HOST');
-            $port = env('DB_PORT', '3306');
-            $dbname = env('DB_DATABASE');
-            $username = env('DB_USERNAME');
-            $password = env('DB_PASSWORD');
+            $host = config('database.connections.mysql.host');
+            $port = config('database.connections.mysql.port');
+            $dbname = config('database.connections.mysql.database');
+            $username = config('database.connections.mysql.username');
+            $password = config('database.connections.mysql.password');
 
             // 3. إنشاء الباك أب باستخدام المكتبة
             $dump = new IMysqldump\Mysqldump("mysql:host={$host};port={$port};dbname={$dbname}", $username, $password);
@@ -35,8 +35,8 @@ class BackupDatabaseToTelegram extends Command
             $this->info('Backup created locally. Sending to Telegram...');
 
             // 4. إرسال الملف لتليجرام
-            $telegramToken = env('TELEGRAM_BACKUP_BOT_TOKEN');
-            $chatId = env('TELEGRAM_CHAT_ID');
+            $telegramToken = config('telegram.backup_bot_token');
+            $chatId = config('telegram.chat_id');
 
             $response = Http::attach(
                 'document', 
