@@ -11,7 +11,7 @@ class VerifyCronKey
     public function handle(Request $request, Closure $next): Response
     {
         // لو الكلمة السرية غلط، اطرده
-        if ($request->query('key') !== env('CRON_KEY')) {
+        if ($request->query('key') !== config('cron.key')) {
             return response()->json(['error' => 'Unauthorized - Invalid Key'], 401);
         }
 
