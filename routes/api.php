@@ -29,22 +29,37 @@ Route::middleware('auth:sanctum')->prefix('v1')->group(function () {
 
 // روت لتشغيل المهام المجدولة من الخارج
 Route::get('/v1/ping', function () {
-    return response()->json(['status' => 'alive', 'time' => now()]);
+    try {
+        // استعلام خفيف جداً يثبت إن الداتا بيز صاحية بدون استهلاك موارد
+        DB::select('SELECT 1'); 
+        
+        return response()->json([
+            'status' => '🚨alive', 
+            'database' => 'connected',
+            'time' => now()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'status' => 'error', 
+            'database' => 'disconnected',
+            'error' => $e->getMessage()
+        ], 500);
+    }
 });
 Route::prefix('v1/cron')->middleware(VerifyCronKey::class)->group(function () {
 
         // أ. روت مراجعة الديون (يضرب من Cron-job الساعة 1 بليل)
         Route::get('/late-payments', function () {
             Artisan::call('app:check-late-payments');
-            return response()->json(['message' => 'Late payments checked!', 'output' => Artisan::output()]);
+            return response()->json(['message' => '🔴Late payments checked!', 'output' => Artisan::output()]);
         });
 
         Route::get('/telegram-summary', function () {
             Artisan::call('app:send-daily-summary');
-            return response()->json(['message' => 'Telegram summary sent!', 'output' => Artisan::output()]);
+            return response()->json(['message' => '💰Telegram summary sent!', 'output' => Artisan::output()]);
         });
         Route::get('/backup-db', function () {
             Artisan::call('app:backup-db');
-            return response()->json(['message' => 'Database backup triggered!', 'output' => Artisan::output()]);
+            return response()->json(['message' => '📦Database backup triggered!', 'output' => Artisan::output()]);
         });
     });
