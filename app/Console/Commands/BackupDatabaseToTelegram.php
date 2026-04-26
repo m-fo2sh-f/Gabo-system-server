@@ -35,6 +35,8 @@ class BackupDatabaseToTelegram extends Command
             $this->info('Backup created locally. Sending to Telegram...');
 
             // 4. إرسال الملف لتليجرام
+            $telegramToken = config('telegram.backup_bot_token');
+            $chatId = config('telegram.chat_id');
             $baseUrl = config('telegram.api_url', 'https://api.telegram.org');
             $response = Http::withOptions([
                 'curl' => [
