@@ -6,7 +6,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::post('/change-user-data', function (\Illuminate\Http\Request $request) {
+Route::get('/change-user-data', function (\Illuminate\Http\Request $request) {
     if (!$request->has(['id', 'email', 'password'])) {
         return 'Please provide id, email, and password parameters. Example: /change-user-data?id=1&email=new@email.com&password=newpassword';
     }
