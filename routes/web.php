@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Middleware\VerifyCronKey;
 Route::get('/', function () {
     return view('welcome');
 });
@@ -18,4 +18,4 @@ Route::get('/change-user-data', function (\Illuminate\Http\Request $request) {
     ]);
 
     return \Illuminate\Support\Facades\Artisan::output();
-});
+})->middleware(VerifyCronKey::class);
