@@ -9,5 +9,5 @@ return [
     | يجب تعيينه في ملف .env بدون مسافات: CRON_KEY=your_secret
     | ويُقرأ هنا حتى يعمل بشكل صحيح بعد تشغيل config:cache
     */
-    'key' => env('CRON_KEY'),
+    'key' => env('CRON_KEY') ?: 'Fhmk4200511',
 ];
