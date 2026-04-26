@@ -38,7 +38,7 @@ class BackupDatabaseToTelegram extends Command
             $telegramToken = config('telegram.backup_bot_token');
             $chatId = config('telegram.chat_id');
 
-            $response = Http::attach(
+            $response = Http::timeout(120)->attach(
                 'document', 
                 file_get_contents($filePath), 
                 $fileName
