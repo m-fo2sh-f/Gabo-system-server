@@ -2,9 +2,6 @@
 set -e
 
 echo "🚀 Starting Gabo System..."
-echo "================ DEBUG SECRETS =================="
-echo "HF CRON_KEY is: ${CRON_KEY}"
-echo "================================================="
 # ============================================================
 # القيم الفعلية مع fallback للـ Aiven credentials
 # ============================================================
@@ -65,8 +62,6 @@ set -a   # auto-export all variables
 source /var/www/html/.env
 set +a   # stop auto-export
 
-echo "🔍 DB_HOST=$DB_HOST"
-echo "🔍 APP_MAINTENANCE_DRIVER=$APP_MAINTENANCE_DRIVER"
 
 cd /var/www/html
 

@@ -12,7 +12,6 @@ class VerifyCronKey
     {
         // لو الكلمة السرية غلط، اطرده
         if ($request->query('key') !== config('cron.key')) {
-            Log::error('Invalid cron key'.$request->query('key').' '.config('cron.key'));
             return response()->json(['error' => 'Unauthorized - Invalid Key'], 401);
         }
 
